@@ -10,7 +10,7 @@ This does that.
 
 | Before | After |
 |:------:|:-----:|
-| <img src="https://i.imgur.com/QYHCVfE.gif" width="380"> | <img src="https://i.imgur.com/rB2QWEu.gif" width="380"> |
+| <img src="https://i.imgur.com/QYHCVfE.gif" width="380"> | <img src="https://i.imgur.com/bSqgIAG.gif" width="380"> |
 
 ## What it does
 
