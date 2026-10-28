@@ -7,10 +7,10 @@ The "See all" button next to **Popular on Netflix** (and other streaming service
 This does that.
 
 ### Before
-![Before - See all goes to all movies](https://imgur.com/QYHCVfE)
+![Before - See all goes to all movies](https://i.imgur.com/QYHCVfE.gif)
 
 ### After
-![After - Filtered grid of Popular on Netflix](https://imgur.com/gallery/bfstm-after-0F7dlfQ#rB2QWEu)
+![After - Filtered grid of Popular on Netflix](https://i.imgur.com/rB2QWEu.gif)
 
 ## What it does
 
@@ -25,6 +25,7 @@ This does that.
 2. Create a new script
 3. Paste the contents of `bingeflix-popular-filter.user.js`
 4. Save and refresh bingeflix.tv
+
 ---
 
 Built for personal use. Feel free to modify it.
