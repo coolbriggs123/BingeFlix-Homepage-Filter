@@ -10,7 +10,7 @@ This does that.
 ![Before - See all goes to all movies](https://imgur.com/QYHCVfE)
 
 ### After
-![After - Filtered grid of Popular on Netflix](https://i.imgur.com/rB2QWEu.gif)
+![After - Filtered grid of Popular on Netflix](https://imgur.com/gallery/bfstm-after-0F7dlfQ#rB2QWEu)
 
 ## What it does
 
