@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Bingeflix – Popular on [Service] Grid
+// @name         Bingeflix – Section Grid Filter
 // @namespace    https://bingeflix.tv
-// @version      1.0
-// @description  Turn "See all" on Popular on Netflix (and similar) into a filtered grid with quick service switching
-// @author       Coolbriggs123
+// @version      2.0
+// @description  Makes every "See all" on the homepage open a filtered grid of that section instead of dumping you on /movies or /tv
+// @author       You
 // @match        https://bingeflix.tv/*
 // @grant        none
 // @run-at       document-idle
@@ -122,7 +122,7 @@
         gap: 1rem;
         color: #a1a1aa;
       ">
-        <div class="bf-spinner" style="
+        <div style="
           width: 36px;
           height: 36px;
           border: 3px solid rgba(255,255,255,0.1);
@@ -134,15 +134,10 @@
       </div>
     `;
 
-    // Inject keyframes once
     if (!document.getElementById('bf-spinner-style')) {
       const style = document.createElement('style');
       style.id = 'bf-spinner-style';
-      style.textContent = `
-        @keyframes bf-spin {
-          to { transform: rotate(360deg); }
-        }
-      `;
+      style.textContent = `@keyframes bf-spin { to { transform: rotate(360deg); } }`;
       document.head.appendChild(style);
     }
   }
@@ -153,7 +148,7 @@
 
     showLoading();
 
-    // Update active state in the bar immediately
+    // Update active state immediately
     filteredOverlay.querySelectorAll('.bf-service-bar button').forEach(btn => {
       const isActive = btn.dataset.service === serviceName;
       btn.style.border = isActive ? '1px solid rgba(255,255,255,0.7)' : '1px solid rgba(255,255,255,0.08)';
@@ -167,10 +162,9 @@
       return;
     }
 
-    // Click the real button
     target.element.click();
 
-    // Wait until the title actually changes (smarter than fixed timeout)
+    // Wait for the correct section to appear
     const start = Date.now();
     let newCards = [];
 
@@ -188,19 +182,8 @@
       }
     }
 
-    if (newCards.length === 0) {
-      // fallback
-      await new Promise(r => setTimeout(r, 400));
-      const titleEl = Array.from(document.querySelectorAll('h2')).find(h =>
-        h.textContent.trim().startsWith('Popular on ')
-      );
-      const section = titleEl?.closest('section');
-      newCards = section ? Array.from(section.querySelectorAll('article.poster-card')) : [];
-    }
-
     currentService = serviceName;
 
-    // Update UI
     const title = filteredOverlay.querySelector('h1');
     const count = filteredOverlay.querySelector('.bf-count');
     const grid = filteredOverlay.querySelector('.media-grid');
@@ -210,18 +193,18 @@
 
     if (grid) {
       grid.innerHTML = '';
-      newCards.forEach(card => {
-        grid.appendChild(card.cloneNode(true));
-      });
+      newCards.forEach(card => grid.appendChild(card.cloneNode(true)));
     }
 
     isSwitching = false;
   }
 
-  function createFilteredView(cards, serviceName) {
+  function createFilteredView(cards, sectionTitle) {
     if (isFiltered) return;
 
-    currentService = serviceName;
+    const isServiceSection = sectionTitle.startsWith('Popular on ');
+    currentService = isServiceSection ? sectionTitle.replace(/^Popular on\s+/i, '').trim() : null;
+
     const root = getRoot();
 
     filteredOverlay = document.createElement('div');
@@ -256,30 +239,33 @@
           ← Back
         </button>
         <div>
-          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:#a1a1aa; margin:0 0 0.15rem;">Films</p>
-          <h1 style="font-size:1.875rem; font-weight:700; margin:0; line-height:1.2;">Popular on ${serviceName}</h1>
+          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:#a1a1aa; margin:0 0 0.15rem;">Section</p>
+          <h1 style="font-size:1.875rem; font-weight:700; margin:0; line-height:1.2;">${sectionTitle}</h1>
         </div>
       </div>
     `;
 
-    // Service bar (deduplicated)
-    const serviceBar = createServiceBar(serviceName);
+    inner.appendChild(header);
+
+    // Only show service bar for "Popular on [Service]" sections
+    if (isServiceSection) {
+      const serviceBar = createServiceBar(currentService);
+      inner.appendChild(serviceBar);
+    }
 
     // Count
     const count = document.createElement('p');
     count.className = 'bf-count';
     count.style.cssText = 'color:#a1a1aa; font-size:0.9rem; margin:0 0 1.25rem;';
     count.textContent = `${cards.length} titles`;
+    inner.appendChild(count);
 
     // Grid
     const grid = document.createElement('div');
     grid.className = 'media-grid';
     cards.forEach(card => grid.appendChild(card.cloneNode(true)));
-
-    inner.appendChild(header);
-    inner.appendChild(serviceBar);
-    inner.appendChild(count);
     inner.appendChild(grid);
+
     filteredOverlay.appendChild(inner);
     document.body.appendChild(filteredOverlay);
 
@@ -312,6 +298,8 @@
 
   function handleSeeAllClick(e) {
     const link = e.currentTarget;
+
+    // Find the closest section
     const section = link.closest('section.content-section') ||
                     link.closest('section') ||
                     link.parentElement?.parentElement;
@@ -320,32 +308,28 @@
     const titleEl = section.querySelector('h2.section-title') || section.querySelector('h2');
     if (!titleEl) return;
 
-    const title = titleEl.textContent.trim();
-    if (!title.startsWith('Popular on ')) return;
+    const sectionTitle = titleEl.textContent.trim();
+    if (!sectionTitle) return;
+
+    // Only handle homepage-style sections (skip if it's already a full catalogue page)
+    const cards = Array.from(section.querySelectorAll('article.poster-card'));
+    if (cards.length === 0) return;
 
     e.preventDefault();
     e.stopImmediatePropagation();
 
-    const serviceName = title.replace(/^Popular on\s+/i, '').trim();
-    const cards = Array.from(section.querySelectorAll('article.poster-card'));
-    if (cards.length === 0) return;
-
-    createFilteredView(cards, serviceName);
+    createFilteredView(cards, sectionTitle);
   }
 
   function attachListeners() {
     document.querySelectorAll('a.section-link').forEach(link => {
       if (link.dataset.bfHandled) return;
       link.dataset.bfHandled = '1';
-
-      const section = link.closest('section') || link.parentElement?.parentElement;
-      const title = section?.querySelector('h2')?.textContent?.trim() || '';
-      if (title.startsWith('Popular on ')) {
-        link.addEventListener('click', handleSeeAllClick, true);
-      }
+      link.addEventListener('click', handleSeeAllClick, true);
     });
   }
 
+  // Initial + keep working when React re-renders
   attachListeners();
 
   const observer = new MutationObserver(() => {
@@ -353,5 +337,5 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  console.log('[Bingeflix Popular Filter] v1.5 loaded');
+  console.log('[Bingeflix Section Filter] v2.0 loaded');
 })();
