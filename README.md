@@ -10,14 +10,14 @@ This does that.
 
 | Before | After |
 |:------:|:-----:|
-| <img src="https://i.imgur.com/QYHCVfE.gif" width="380"> | <img src="https://i.imgur.com/s1n3T6Y.gif" width="380"> |
+| <img src="https://i.imgur.com/QYHCVfE.gif" width="380"> | <img src="https://i.imgur.com/rB2QWEu.gif" width="380"> |
 
 ## What it does
 
 - Intercepts the "See all" link on any "Popular on [Service]" section
-- Builds a clean full-page grid using only the titles from that section
-- Adds a back button (and Escape key) that returns you to the homepage without breaking provider switching
-- Leaves the rest of the site alone
+- Opens a clean full-page grid of only those titles
+- Adds the streaming service buttons at the top so you can quickly switch between Netflix, Disney+, Prime, etc.
+- Back button returns you to the homepage
 
 ## Install
 
