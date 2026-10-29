@@ -2,9 +2,9 @@
 
 A small userscript that fixes one specific annoyance on bingeflix.tv.
 
-The "See all" button next to **Popular on Netflix** (and other streaming services) just sends you to the full movie catalogue. I wanted a proper grid of only those titles instead — the same layout as the normal movies page, but filtered to the list I was actually looking at.
+The "See all" button next to **Popular on Netflix** (and other streaming services) just sends you to the full movie catalogue. I wanted a proper grid of only those titles instead — the same layout as the normal movies page, but filtered to the list I was actually looking at. 
 
-This does that.
+This does that and more, including infinite loading of services like Netflix, and filters by the other categories using the same format.
 
 ### Before → After
 
@@ -14,8 +14,8 @@ This does that.
 
 ## What it does
 
-- Intercepts the "See all" link on any "Popular on [Service]" section
-- Opens a clean full-page grid of only those titles
+- Intercepts the "See all" links
+- Opens a clean full-page grid of only those titles associated with that filter
 - Adds the streaming service buttons at the top so you can quickly switch between Netflix, Disney+, Prime, etc.
 - Back button returns you to the homepage
 
