@@ -1,4 +1,4 @@
-# Bingeflix Popular Filter
+# Bingeflix Popular Filter (NOW IMPLEMENTED IN BINGEFLIX, DEPRECATED)
 
 A small userscript that fixes one specific annoyance on bingeflix.tv.
 
